@@ -50,10 +50,10 @@ class DataKeeper:
         #x_valid, y_valid létrehozása
         self.x_valid = []
         self.y_valid = []
-        for x in train:
+        for x in valid:
             self.x_valid.append(x[0])
             self.y_valid.append(x[1])
-            
+
         #numpy tömbbe konvertálás
         self.x_train = np.array(self.x_train)
         self.y_train = np.array(self.y_train)
@@ -63,7 +63,6 @@ class DataKeeper:
         
         self.x_valid = np.array(self.x_valid)
         self.y_valid = np.array(self.y_valid) 
-        print("Kész")
         
         
 def WavToSplittedArray(filename="", window_size = 100):
@@ -78,7 +77,22 @@ def WavToSplittedArray(filename="", window_size = 100):
       kimenet.append(buffer)
     return kimenet
 
-def WavToOverlappedArray(filename="", window_size=1500, overlap = 500):
+
+def WavToOverlappedArray(filename="", window_size=100, offset = 500):
+    fs, wave = scipy.io.wavfile.read(filename) 
+    windows_count = int(len(wave)/offset)-int(window_size/offset)-1
+    print("hossz: " + str(len(wave)))
+    print("ennyi ablak van benne: " + str((windows_count)))
+    kimenet = []
+    for i in range(windows_count):
+      buffer = []
+      for x in range(window_size):
+        buffer.append(wave[i*offset+x])
+      kimenet.append(buffer)
+    return kimenet
+
+
+def WavToOverlappedArray2(filename="", window_size=1500, overlap = 500):
     fs, wave = scipy.io.wavfile.read(filename) 
     
     kimenet = []
@@ -119,3 +133,9 @@ def save_history(history, name):
     plt.xlabel('epoch')
     plt.legend(['train', 'valid'], loc='upper left')
     plt.savefig(name + "_loss.png")
+
+
+def Log(text):
+    print("****************************************************")
+    print(text)
+    print("****************************************************")
